@@ -25,13 +25,6 @@ export class RequestService {
           timeLeft++;
         }
       },1000)
-      // if (window.navigator.onLine && !document.hidden) {
-      //   request.subscribe(value => console.log(value));
-      // } else if (window.navigator.onLine && document.hidden) {
-      //   console.log('Пользователь неактивен 3 секунд');
-      // } else if (!window.navigator.onLine) {
-      //   console.log('Отсутствует подключение к интернету. Отправка запроса невозможна');
-      // }
       if (timeLeft < 10 && window.navigator.onLine){
         request.subscribe(value => console.log(value));
       } else if (timeLeft > 10){
