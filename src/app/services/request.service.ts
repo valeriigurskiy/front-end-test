@@ -10,24 +10,41 @@ import {fromEvent, interval, Observable, of, timer} from 'rxjs';
 export class RequestService {
   url: string = 'https://jsonplaceholder.typicode.com/users/1';
   requestToApi = interval(10000);
+  interval;
   constructor(private httpClient: HttpClient) {
   }
 
   request() {
+    let timeLeft: number = 0;
     const request = this.httpClient.get(this.url);
     this.requestToApi.subscribe(() => {
-      if (window.navigator.onLine && !document.hidden) {
+      this.interval = setInterval(() => {
+        if(!document.hidden) {
+          timeLeft = 0;
+        } else {
+          timeLeft++;
+        }
+      },1000)
+      // if (window.navigator.onLine && !document.hidden) {
+      //   request.subscribe(value => console.log(value));
+      // } else if (window.navigator.onLine && document.hidden) {
+      //   console.log('Пользователь неактивен 3 секунд');
+      // } else if (!window.navigator.onLine) {
+      //   console.log('Отсутствует подключение к интернету. Отправка запроса невозможна');
+      // }
+      if (timeLeft < 10 && window.navigator.onLine){
         request.subscribe(value => console.log(value));
-        } else if (window.navigator.onLine && document.hidden) {
-          console.log('Пользователь неактивен 10 секунд');
-      } else if (!window.navigator.onLine) {
+      } else if (timeLeft > 10){
+        console.log('Пользователь неактивен 10 секунд');
+      } else if (!window.navigator.onLine){
         console.log('Отсутствует подключение к интернету. Отправка запроса невозможна');
       }
-    })
-    document.onvisibilitychange = function () {
-      if (!document.hidden){
-        request.subscribe(value => console.log(value));
+      document.onvisibilitychange = function(){
+        if (!document.hidden && timeLeft > 10){
+          timeLeft = 0;
+          request.subscribe(value => console.log(value));
+        }
       }
-    }
+    })
   }
 }
